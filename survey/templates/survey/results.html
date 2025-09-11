@@ -17,7 +17,7 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
                     <h1 class="display-6 fw-bold">Survey Results Dashboard</h1>
-                    <p class="text-muted mb-0">Review patient demographics, scores, and satisfaction</p>
+                    <p class="text-muted mb-0">Review patient demographics, WOMAC scores, VAS, satisfaction, and ambulation status</p>
                 </div>
                 <div>
                     <a href="/" class="btn btn-sm btn-primary me-2">📝 New Questionnaire</a>
@@ -49,31 +49,22 @@
                                 </thead>
                                 <tbody>
                                     {% for r in responses %}
-                                    {% comment %}
-                                        Calculate pain, stiffness, function totals inline
-                                    {% endcomment %}
-                                    {% with 
-                                        pain_total=r.womac_pain_walking|default:0|add:r.womac_pain_stairs|add:r.womac_pain_nocturnal|add:r.womac_pain_rest|add:r.womac_pain_weight_bearing
-                                        stiffness_total=r.womac_stiffness_morning|default:0|add:r.womac_stiffness_later_day
-                                        function_total=r.womac_function_descend_stairs|add:r.womac_function_ascend_stairs|add:r.womac_function_rising_sitting|add:r.womac_function_standing|add:r.womac_function_bending_floor|add:r.womac_function_walking_flat|add:r.womac_function_in_out_car|add:r.womac_function_shopping|add:r.womac_function_putting_socks|add:r.womac_function_lying_bed|add:r.womac_function_taking_socks_off|add:r.womac_function_rising_bed|add:r.womac_function_in_out_bath|add:r.womac_function_sitting|add:r.womac_function_on_off_toilet|add:r.womac_function_heavy_domestic|add:r.womac_function_light_domestic
-                                        total=pain_total|add:stiffness_total|add:function_total
-                                    %}
                                     <tr>
                                         <td>{{ r.id }}</td>
                                         <td>{{ r.name }}</td>
                                         <td>{{ r.age }}</td>
                                         <td>{{ r.sex|title }}</td>
                                         <td>{{ r.created_at|date:"Y-m-d H:i" }}</td>
-                                        <td>{{ pain_total }}</td>
-                                        <td>{{ stiffness_total }}</td>
-                                        <td>{{ function_total }}</td>
+                                        <td>{{ r.pain_total }}</td>
+                                        <td>{{ r.stiffness_total }}</td>
+                                        <td>{{ r.function_total }}</td>
                                         <td>
-                                            {% if total <= 32 %}
-                                                <span class="badge bg-success">{{ total }} (Mild)</span>
-                                            {% elif total <= 64 %}
-                                                <span class="badge bg-warning text-dark">{{ total }} (Moderate)</span>
+                                            {% if r.total_womac <= 32 %}
+                                                <span class="badge bg-success">{{ r.total_womac }} (Mild)</span>
+                                            {% elif r.total_womac <= 64 %}
+                                                <span class="badge bg-warning text-dark">{{ r.total_womac }} (Moderate)</span>
                                             {% else %}
-                                                <span class="badge bg-danger">{{ total }} (Severe)</span>
+                                                <span class="badge bg-danger">{{ r.total_womac }} (Severe)</span>
                                             {% endif %}
                                         </td>
                                         <td>
@@ -96,9 +87,20 @@
                                                 <span class="badge bg-danger">{{ r.satisfaction }}</span>
                                             {% endif %}
                                         </td>
-                                        <td>{{ r.get_ambulation_display }}</td>
+                                        <td>
+                                            {% if r.ambulation == "Independent" %}
+                                                <span class="badge bg-success">{{ r.ambulation }}</span>
+                                            {% elif r.ambulation == "Cane" %}
+                                                <span class="badge bg-primary">{{ r.ambulation }}</span>
+                                            {% elif r.ambulation == "Walker" %}
+                                                <span class="badge bg-warning text-dark">{{ r.ambulation }}</span>
+                                            {% elif r.ambulation == "Wheelchair" %}
+                                                <span class="badge bg-danger">{{ r.ambulation }}</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">{{ r.ambulation }}</span>
+                                            {% endif %}
+                                        </td>
                                     </tr>
-                                    {% endwith %}
                                     {% endfor %}
                                 </tbody>
                             </table>
@@ -119,6 +121,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
 
 
 
