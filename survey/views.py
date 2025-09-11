@@ -15,9 +15,63 @@ def questionnaire_view(request):
 def thank_you_view(request):
     return render(request, "survey/thank_you.html")
 
+from django.shortcuts import render
+from .models import QuestionnaireResponse
+
 def results_view(request):
     responses = QuestionnaireResponse.objects.all()
-    return render(request, "survey/results.html", {"responses": responses})
+
+    processed = []
+    for r in responses:
+        pain_total = (
+            (r.womac_pain_walking or 0) +
+            (r.womac_pain_stairs or 0) +
+            (r.womac_pain_nocturnal or 0) +
+            (r.womac_pain_rest or 0) +
+            (r.womac_pain_weight_bearing or 0)
+        )
+        stiffness_total = (
+            (r.womac_stiffness_morning or 0) +
+            (r.womac_stiffness_later_day or 0)
+        )
+        function_total = (
+            (r.womac_function_descend_stairs or 0) +
+            (r.womac_function_ascend_stairs or 0) +
+            (r.womac_function_rising_sitting or 0) +
+            (r.womac_function_standing or 0) +
+            (r.womac_function_bending_floor or 0) +
+            (r.womac_function_walking_flat or 0) +
+            (r.womac_function_in_out_car or 0) +
+            (r.womac_function_shopping or 0) +
+            (r.womac_function_putting_socks or 0) +
+            (r.womac_function_lying_bed or 0) +
+            (r.womac_function_taking_socks_off or 0) +
+            (r.womac_function_rising_bed or 0) +
+            (r.womac_function_in_out_bath or 0) +
+            (r.womac_function_sitting or 0) +
+            (r.womac_function_on_off_toilet or 0) +
+            (r.womac_function_heavy_domestic or 0) +
+            (r.womac_function_light_domestic or 0)
+        )
+        total_womac = pain_total + stiffness_total + function_total
+
+        processed.append({
+            "id": r.id,
+            "name": r.name,
+            "age": r.age,
+            "sex": r.sex,
+            "created_at": r.created_at,
+            "pain_total": pain_total,
+            "stiffness_total": stiffness_total,
+            "function_total": function_total,
+            "total_womac": total_womac,
+            "vas_pain": r.vas_pain,
+            "satisfaction": r.satisfaction,
+            "ambulation": r.get_ambulation_display(),
+        })
+
+    return render(request, "survey/results.html", {"responses": processed})
+
 
 import csv
 from django.http import HttpResponse
