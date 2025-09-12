@@ -7,7 +7,8 @@ urlpatterns = [
     path('', include('survey.urls')),   # your survey app routes
 
     # 🔑 Authentication routes
-    path('login/', auth_views.LoginView.as_view(template_name="survey/login.html"), name="login"),
+# Authentication routes (use default template location: registration/login.html)
+    path('login/', auth_views.LoginView.as_view(), name="login"),
     path('logout/', auth_views.LogoutView.as_view(next_page="/"), name="logout"),
 ]
 
