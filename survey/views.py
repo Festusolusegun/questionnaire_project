@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect
 from .form import QuestionnaireForm
 from .models import QuestionnaireResponse
 from django.contrib.auth.decorators import login_required, user_passes_test
-
+from django.http import HttpResponse
+import csv
 
 
 def questionnaire_view(request):
@@ -20,9 +21,9 @@ def thank_you_view(request):
     return render(request, "survey/thank_you.html")
 
 
-# Allow only superusers to view results
+# Results view (only superusers, must be logged in)
 @login_required(login_url='/login/')
-@user_passes_test(lambda u: u.is_superuser
+@user_passes_test(lambda u: u.is_superuser)
 def results_view(request):
     responses = QuestionnaireResponse.objects.all()
 
@@ -78,6 +79,9 @@ def results_view(request):
     return render(request, "survey/results.html", {"responses": processed})
 
 
+# CSV Export
+@login_required(login_url='/login/')
+@user_passes_test(lambda u: u.is_superuser)
 def export_responses_csv(request):
     responses = QuestionnaireResponse.objects.all()
 
@@ -93,20 +97,31 @@ def export_responses_csv(request):
 
     for r in responses:
         pain_total = (
-            r.womac_pain_walking + r.womac_pain_stairs + r.womac_pain_nocturnal +
-            r.womac_pain_rest + r.womac_pain_weight_bearing
+            (r.womac_pain_walking or 0) +
+            (r.womac_pain_stairs or 0) +
+            (r.womac_pain_nocturnal or 0) +
+            (r.womac_pain_rest or 0) +
+            (r.womac_pain_weight_bearing or 0)
         )
-        stiffness_total = r.womac_stiffness_morning + r.womac_stiffness_later_day
+        stiffness_total = (r.womac_stiffness_morning or 0) + (r.womac_stiffness_later_day or 0)
         function_total = (
-            r.womac_function_descend_stairs + r.womac_function_ascend_stairs +
-            r.womac_function_rising_sitting + r.womac_function_standing +
-            r.womac_function_bending_floor + r.womac_function_walking_flat +
-            r.womac_function_in_out_car + r.womac_function_shopping +
-            r.womac_function_putting_socks + r.womac_function_lying_bed +
-            r.womac_function_taking_socks_off + r.womac_function_rising_bed +
-            r.womac_function_in_out_bath + r.womac_function_sitting +
-            r.womac_function_on_off_toilet + r.womac_function_heavy_domestic +
-            r.womac_function_light_domestic
+            (r.womac_function_descend_stairs or 0) +
+            (r.womac_function_ascend_stairs or 0) +
+            (r.womac_function_rising_sitting or 0) +
+            (r.womac_function_standing or 0) +
+            (r.womac_function_bending_floor or 0) +
+            (r.womac_function_walking_flat or 0) +
+            (r.womac_function_in_out_car or 0) +
+            (r.womac_function_shopping or 0) +
+            (r.womac_function_putting_socks or 0) +
+            (r.womac_function_lying_bed or 0) +
+            (r.womac_function_taking_socks_off or 0) +
+            (r.womac_function_rising_bed or 0) +
+            (r.womac_function_in_out_bath or 0) +
+            (r.womac_function_sitting or 0) +
+            (r.womac_function_on_off_toilet or 0) +
+            (r.womac_function_heavy_domestic or 0) +
+            (r.womac_function_light_domestic or 0)
         )
 
         writer.writerow([
@@ -116,6 +131,7 @@ def export_responses_csv(request):
         ])
 
     return response
+
 
 
 
