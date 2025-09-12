@@ -1,10 +1,16 @@
 from django.contrib import admin
 from django.urls import path, include
+from django.contrib.auth import views as auth_views   # 👈 import Django’s auth views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('survey.urls')),  # include app urls
+    path('', include('survey.urls')),   # your survey app routes
+
+    # 🔑 Authentication routes
+    path('login/', auth_views.LoginView.as_view(template_name="survey/login.html"), name="login"),
+    path('logout/', auth_views.LogoutView.as_view(next_page="/"), name="logout"),
 ]
+
 
 
 
