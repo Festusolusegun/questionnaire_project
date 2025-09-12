@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
+from django.http import HttpResponse
+from django.contrib.auth.decorators import user_passes_test
 from .form import QuestionnaireForm
 from .models import QuestionnaireResponse
-from django.contrib.auth.decorators import
+import csv
 
 
 def questionnaire_view(request):
@@ -14,15 +16,9 @@ def questionnaire_view(request):
         form = QuestionnaireForm()
     return render(request, "survey/questionnaire.html", {"form": form})
 
+
 def thank_you_view(request):
     return render(request, "survey/thank_you.html")
-
-from django.shortcuts import render
-from .models import QuestionnaireResponse
-
-from django.contrib.auth.decorators import user_passes_test
-from django.shortcuts import render
-from .models import QuestionnaireResponse
 
 
 # Allow only superusers to view results
@@ -82,27 +78,19 @@ def results_view(request):
     return render(request, "survey/results.html", {"responses": processed})
 
 
-
-import csv
-from django.http import HttpResponse
-
 def export_responses_csv(request):
     responses = QuestionnaireResponse.objects.all()
 
-    # Create the HTTP response with CSV header
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="responses.csv"'
 
     writer = csv.writer(response)
-    
-    # Write header row
     writer.writerow([
         "ID", "Name", "Age", "Sex", "Date",
         "WOMAC Pain Total", "WOMAC Stiffness Total", "WOMAC Function Total",
         "VAS Pain", "Satisfaction", "Ambulation"
     ])
 
-    # Write data rows
     for r in responses:
         pain_total = (
             r.womac_pain_walking + r.womac_pain_stairs + r.womac_pain_nocturnal +
@@ -128,5 +116,6 @@ def export_responses_csv(request):
         ])
 
     return response
+
 
 
