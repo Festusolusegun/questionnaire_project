@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import login_required, user_passes_test
 from .form import QuestionnaireForm
 from .models import QuestionnaireResponse
 import csv
@@ -22,7 +22,8 @@ def thank_you_view(request):
 
 
 # Allow only superusers to view results
-@user_passes_test(lambda u: u.is_superuser)
+@login_required(login_url='/login/')
+@user_passes_test(lambda u: u.is_superuser
 def results_view(request):
     responses = QuestionnaireResponse.objects.all()
 
