@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from .form import QuestionnaireForm
 from .models import QuestionnaireResponse
+from django.contrib.auth.decorators import
+
 
 def questionnaire_view(request):
     if request.method == "POST":
@@ -18,6 +20,13 @@ def thank_you_view(request):
 from django.shortcuts import render
 from .models import QuestionnaireResponse
 
+from django.contrib.auth.decorators import user_passes_test
+from django.shortcuts import render
+from .models import QuestionnaireResponse
+
+
+# Allow only superusers to view results
+@user_passes_test(lambda u: u.is_superuser)
 def results_view(request):
     responses = QuestionnaireResponse.objects.all()
 
@@ -71,6 +80,7 @@ def results_view(request):
         })
 
     return render(request, "survey/results.html", {"responses": processed})
+
 
 
 import csv
