@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .form import QuestionnaireForm
+from .forms import QuestionnaireForm
 from .models import QuestionnaireResponse
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import HttpResponse
