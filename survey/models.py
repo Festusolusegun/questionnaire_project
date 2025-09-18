@@ -1,37 +1,48 @@
 from django.db import models
 
-class QuestionnaireResponse(models.Model):
-    # Demographics
-    name = models.CharField(max_length=100, default="Unknown")
-    age = models.IntegerField(default=0)
-    sex = models.CharField(
-        max_length=10,
-        choices=[('male', 'Male'), ('female', 'Female'), ('other', 'Other')],
-        default='male'
-    )
-    phone = models.CharField(max_length=15, blank=True, null=True)  # 📞 phone number
 
-    # New surgery info
-    had_tkr = models.BooleanField(default=False)   # total knee replacement
-    tkr_date = models.DateField(blank=True, null=True)
+class QuestionnaireResponse(models.Model):
+    SEX_CHOICES = [
+        ("male", "Male"),
+        ("female", "Female"),
+        ("other", "Other"),
+    ]
+
+    AMBULATION_CHOICES = [
+        ("independent", "Independent"),
+        ("cane", "Cane"),
+        ("walker", "Walker"),
+        ("wheelchair", "Wheelchair"),
+    ]
+
+    # Demographics
+    name = models.CharField(max_length=100)
+    age = models.PositiveIntegerField()
+    sex = models.CharField(max_length=10, choices=SEX_CHOICES)
+    phone = models.CharField(max_length=20, blank=True, null=True)  # ✅ New
+
+    # Surgery history
+    had_tkr = models.BooleanField(default=False)                   # ✅ New
+    tkr_date = models.DateField(blank=True, null=True)             # ✅ New
 
     # Radiograph upload
-    radiograph = models.FileField(upload_to="radiographs/", blank=True, null=True)
+    radiograph = models.FileField(upload_to="radiographs/", blank=True, null=True)  # ✅ New
 
-    created_at = models.DateTimeField(auto_now_add=True)
+    # VAS Pain
+    vas_pain = models.PositiveIntegerField()
 
-    # WOMAC Pain (5 items)
+    # WOMAC Pain (0–4 each, total 0–20)
     womac_pain_walking = models.IntegerField(default=0)
     womac_pain_stairs = models.IntegerField(default=0)
     womac_pain_nocturnal = models.IntegerField(default=0)
     womac_pain_rest = models.IntegerField(default=0)
     womac_pain_weight_bearing = models.IntegerField(default=0)
 
-    # WOMAC Stiffness (2 items)
+    # WOMAC Stiffness (0–4 each, total 0–8)
     womac_stiffness_morning = models.IntegerField(default=0)
     womac_stiffness_later_day = models.IntegerField(default=0)
 
-    # WOMAC Physical Function (17 items)
+    # WOMAC Function (0–4 each, total 0–68)
     womac_function_descend_stairs = models.IntegerField(default=0)
     womac_function_ascend_stairs = models.IntegerField(default=0)
     womac_function_rising_sitting = models.IntegerField(default=0)
@@ -50,28 +61,15 @@ class QuestionnaireResponse(models.Model):
     womac_function_heavy_domestic = models.IntegerField(default=0)
     womac_function_light_domestic = models.IntegerField(default=0)
 
-    # Other measures
-    vas_pain = models.IntegerField(default=0)
-    satisfaction = models.IntegerField(default=0)
-    ambulation = models.CharField(
-        max_length=20,
-        choices=[
-            ('independent', 'Independent'),
-            ('cane', 'Uses Cane'),
-            ('walker', 'Uses Walker'),
-            ('wheelchair', 'Wheelchair-bound'),
-        ],
-        default='independent'
-    )
+    # Satisfaction (1–5 scale)
+    satisfaction = models.IntegerField(default=3)
 
+    # Ambulation status
+    ambulation = models.CharField(max_length=20, choices=AMBULATION_CHOICES)
+
+    # Date of entry
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.name} ({self.age} yrs) - {self.created_at.date()}"
-
-
-
-
-
-
+        return f"{self.name} ({self.age} y/o)"
 
