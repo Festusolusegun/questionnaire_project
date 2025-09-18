@@ -9,6 +9,16 @@ class QuestionnaireResponse(models.Model):
         choices=[('male', 'Male'), ('female', 'Female'), ('other', 'Other')],
         default='male'
     )
+    phone = models.CharField(max_length=15, blank=True, null=True)  # 📞 phone number
+
+    # New surgery info
+    had_tkr = models.BooleanField(default=False)   # total knee replacement
+    tkr_date = models.DateField(blank=True, null=True)
+
+    # Radiograph upload
+    radiograph = models.FileField(upload_to="radiographs/", blank=True, null=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
 
     # WOMAC Pain (5 items)
     womac_pain_walking = models.IntegerField(default=0)
