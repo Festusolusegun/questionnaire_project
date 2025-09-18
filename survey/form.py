@@ -3,7 +3,6 @@ from .models import QuestionnaireResponse
 
 WOMAC_CHOICES = [(i, str(i)) for i in range(5)]  # 0–4 scale
 
-
 class QuestionnaireForm(forms.ModelForm):
     class Meta:
         model = QuestionnaireResponse
@@ -23,35 +22,25 @@ class QuestionnaireForm(forms.ModelForm):
             "womac_function_in_out_bath", "womac_function_sitting",
             "womac_function_on_off_toilet", "womac_function_heavy_domestic",
             "womac_function_light_domestic",
-            "satisfaction", "ambulation",
-        ]  # ✅ matches all model fields
-
+            "satisfaction", "ambulation"
+        ]
         widgets = {
             # Demographics
             "name": forms.TextInput(attrs={"class": "form-control"}),
             "age": forms.NumberInput(attrs={"min": 0, "class": "form-control"}),
             "sex": forms.Select(attrs={"class": "form-select"}),
             "phone": forms.TextInput(attrs={"class": "form-control"}),
-
-            # Surgical history
-            "had_tkr": forms.Select(attrs={"class": "form-select"}),
             "tkr_date": forms.DateInput(attrs={"type": "date", "class": "form-control"}),
-
-            # Radiograph
             "radiograph": forms.ClearableFileInput(attrs={"class": "form-control"}),
 
-            # WOMAC pain
+            # WOMAC
             "womac_pain_walking": forms.RadioSelect(choices=WOMAC_CHOICES),
             "womac_pain_stairs": forms.RadioSelect(choices=WOMAC_CHOICES),
             "womac_pain_nocturnal": forms.RadioSelect(choices=WOMAC_CHOICES),
             "womac_pain_rest": forms.RadioSelect(choices=WOMAC_CHOICES),
             "womac_pain_weight_bearing": forms.RadioSelect(choices=WOMAC_CHOICES),
-
-            # WOMAC stiffness
             "womac_stiffness_morning": forms.RadioSelect(choices=WOMAC_CHOICES),
             "womac_stiffness_later_day": forms.RadioSelect(choices=WOMAC_CHOICES),
-
-            # WOMAC function (repeat for all)
             "womac_function_descend_stairs": forms.RadioSelect(choices=WOMAC_CHOICES),
             "womac_function_ascend_stairs": forms.RadioSelect(choices=WOMAC_CHOICES),
             "womac_function_rising_sitting": forms.RadioSelect(choices=WOMAC_CHOICES),
@@ -74,13 +63,8 @@ class QuestionnaireForm(forms.ModelForm):
             "vas_pain": forms.NumberInput(attrs={"min": 0, "max": 10, "class": "form-control"}),
 
             # Satisfaction
-            "satisfaction": forms.RadioSelect(
-                choices=[(i, str(i)) for i in range(1, 6)]
-            ),
+            "satisfaction": forms.RadioSelect(choices=[(i, str(i)) for i in range(1, 6)]),
 
             # Ambulation
             "ambulation": forms.Select(attrs={"class": "form-select"}),
         }
-
-
-
