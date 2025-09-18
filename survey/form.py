@@ -6,7 +6,7 @@ WOMAC_CHOICES = [(i, str(i)) for i in range(5)]  # 0–4 scale
 class QuestionnaireForm(forms.ModelForm):
     class Meta:
         model = QuestionnaireResponse
-        fields = [
+        fields = [   # 👈 aligned with "model"
             "name", "age", "sex", "phone",
             "had_tkr", "tkr_date", "radiograph",
             "vas_pain",
@@ -24,6 +24,7 @@ class QuestionnaireForm(forms.ModelForm):
             "womac_function_light_domestic",
             "satisfaction", "ambulation"
         ]
+
         widgets = {
             # Demographics
             "name": forms.TextInput(attrs={"class": "form-control"}),
