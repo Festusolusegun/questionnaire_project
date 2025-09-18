@@ -1,8 +1,8 @@
 from django import forms
 from .models import QuestionnaireResponse
 
-# Choices for WOMAC scale
-WOMAC_CHOICES = [(i, str(i)) for i in range(5)]  # 0–4 scale
+# Choices for WOMAC scale (0–4)
+WOMAC_CHOICES = [(i, str(i)) for i in range(5)]
 
 class QuestionnaireForm(forms.ModelForm):
     class Meta:
@@ -27,35 +27,23 @@ class QuestionnaireForm(forms.ModelForm):
         ]
 
         widgets = {
-            # Demographics
             "name": forms.TextInput(attrs={"class": "form-control"}),
             "age": forms.NumberInput(attrs={"min": 0, "class": "form-control"}),
             "sex": forms.Select(attrs={"class": "form-select"}),
             "phone": forms.TextInput(attrs={"class": "form-control", "placeholder": "e.g. +2347012345678"}),
             "tkr_date": forms.DateInput(attrs={"type": "date", "class": "form-control"}),
-
-            # WOMAC Pain
             "womac_pain_walking": forms.RadioSelect(choices=WOMAC_CHOICES),
             "womac_pain_stairs": forms.RadioSelect(choices=WOMAC_CHOICES),
             "womac_pain_nocturnal": forms.RadioSelect(choices=WOMAC_CHOICES),
             "womac_pain_rest": forms.RadioSelect(choices=WOMAC_CHOICES),
             "womac_pain_weight_bearing": forms.RadioSelect(choices=WOMAC_CHOICES),
-
-            # WOMAC Stiffness
             "womac_stiffness_morning": forms.RadioSelect(choices=WOMAC_CHOICES),
             "womac_stiffness_later_day": forms.RadioSelect(choices=WOMAC_CHOICES),
-
-            # VAS
             "vas_pain": forms.NumberInput(attrs={"min": 0, "max": 10, "class": "form-control"}),
-
-            # Satisfaction
             "satisfaction": forms.RadioSelect(choices=[(i, str(i)) for i in range(1, 6)]),
-
-            # Ambulation
             "ambulation": forms.Select(attrs={"class": "form-select"}),
-
-            # Radiograph
             "radiograph": forms.ClearableFileInput(attrs={"class": "form-control"}),
         }
+
 
 
