@@ -8,13 +8,14 @@ import csv
 
 def questionnaire_view(request):
     if request.method == "POST":
-        form = QuestionnaireForm(request.POST)
+        form = QuestionnaireForm(request.POST, request.FILES)  # 👈 include FILES
         if form.is_valid():
             form.save()
-            return redirect('thank_you')
+            return redirect("thank_you")
     else:
         form = QuestionnaireForm()
     return render(request, "survey/questionnaire.html", {"form": form})
+
 
 
 def thank_you_view(request):
