@@ -17,16 +17,11 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
                     <h1 class="display-6 fw-bold">Survey Results Dashboard</h1>
-                    <p class="text-muted mb-0">Review patient demographics, WOMAC scores, VAS, satisfaction, and ambulation status</p>
+                    <p class="text-muted mb-0">Patient demographics, surgery history, WOMAC scores, VAS, satisfaction, and ambulation</p>
                 </div>
-                <div class="d-flex">
+                <div>
                     <a href="/" class="btn btn-sm btn-primary me-2">📝 New Questionnaire</a>
-                    <a href="{% url 'export_responses_csv' %}" class="btn btn-sm btn-success me-2">⬇️ Export CSV</a>
-                    <!-- Logout Button (POST form) -->
-                    <form method="post" action="{% url 'logout' %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-sm btn-outline-danger">🚪 Logout</button>
-                    </form>
+                    <a href="{% url 'export_responses_csv' %}" class="btn btn-sm btn-success">⬇️ Export CSV</a>
                 </div>
             </div>
 
@@ -40,14 +35,18 @@
                                     <tr>
                                         <th>ID</th>
                                         <th>Name</th>
+                                        <th>Phone</th>
                                         <th>Age</th>
                                         <th>Sex</th>
                                         <th>Date</th>
-                                        <th>WOMAC Pain (0–20)</th>
-                                        <th>WOMAC Stiffness (0–8)</th>
-                                        <th>WOMAC Function (0–68)</th>
-                                        <th>Total WOMAC (0–96)</th>
-                                        <th>VAS Pain (0–10)</th>
+                                        <th>Had TKR?</th>
+                                        <th>TKR Date</th>
+                                        <th>Radiograph</th>
+                                        <th>WOMAC Pain</th>
+                                        <th>WOMAC Stiffness</th>
+                                        <th>WOMAC Function</th>
+                                        <th>Total WOMAC</th>
+                                        <th>VAS Pain</th>
                                         <th>Satisfaction</th>
                                         <th>Ambulation</th>
                                     </tr>
@@ -57,9 +56,19 @@
                                     <tr>
                                         <td>{{ r.id }}</td>
                                         <td>{{ r.name }}</td>
+                                        <td>{{ r.phone }}</td>
                                         <td>{{ r.age }}</td>
                                         <td>{{ r.sex|title }}</td>
                                         <td>{{ r.created_at|date:"Y-m-d H:i" }}</td>
+                                        <td>{{ r.had_tkr|yesno:"Yes,No" }}</td>
+                                        <td>{% if r.tkr_date %}{{ r.tkr_date|date:"Y-m-d" }}{% else %}-{% endif %}</td>
+                                        <td>
+                                            {% if r.radiograph %}
+                                                <a href="{{ r.radiograph.url }}" target="_blank" class="btn btn-sm btn-outline-dark">View</a>
+                                            {% else %}
+                                                <span class="text-muted">No upload</span>
+                                            {% endif %}
+                                        </td>
                                         <td>{{ r.pain_total }}</td>
                                         <td>{{ r.stiffness_total }}</td>
                                         <td>{{ r.function_total }}</td>
@@ -126,6 +135,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
 
 
 
